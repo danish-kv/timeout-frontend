@@ -1,21 +1,13 @@
 import React from "react";
 import { Building2, Users, Calendar, CheckCircle } from "lucide-react";
 import { Link  } from "react-router-dom"
+import Header from "../features/employee/components/Header";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 flex flex-col">
       {/* Navigation Bar */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-6 w-6 text-red-600" />
-            <span className="text-xl font-semibold text-gray-800">
-              Timeout
-            </span>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-8">
