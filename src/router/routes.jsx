@@ -3,6 +3,13 @@ import LandingPage from "../pages/LandingPage";
 import ManagerAuth from "../features/auth/pages/ManagerAuth";
 import EmployeeAuth from "../features/auth/pages/EmployeeAuth";
 import NotFound from "../pages/NotFound";
+import Dashboard from "../features/manager/pages/Dashboard";
+import EmployeeManagement from "../features/manager/pages/EmployeeManagement";
+import LeaveManagement from "../features/manager/pages/LeaveManagement";
+import ManagerLayout from "../features/manager/layout/ManagerLayout";
+import Profile from "../features/employee/pages/Profile";
+import Leave from "../features/employee/pages/Leave";
+import Home from "../features/employee/pages/Home";
 
 const routes = createBrowserRouter([
   {
@@ -18,6 +25,42 @@ const routes = createBrowserRouter([
     path: "/auth",
     element: <EmployeeAuth />,
   },
+
+  // Employe
+  {
+    path: "/home",
+    element: <Home />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  {
+    path: "/leave",
+    element: <Leave />,
+  },
+
+
+  // Admin
+  {
+    path: "/admin",
+    element: <ManagerLayout />,
+    children: [
+      {
+        path: "",
+        element: <Dashboard />
+      },
+      {
+        path: "employees",
+        element: <EmployeeManagement />
+      },
+      {
+        path: "leaves",
+        element: <LeaveManagement />
+      }
+    ]
+  },
+
   {path : '*', element :  <NotFound/>}
 ]);
 
