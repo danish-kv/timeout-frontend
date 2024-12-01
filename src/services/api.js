@@ -61,17 +61,14 @@ api.interceptors.response.use(
         } catch (err) {
           console.log("Refresh token failed", err);
           localStorage.clear();
-          showToast(
-            400,
-            "Your session has expired. Please log in again!"
-          );
+          showToast(400, "Your session has expired. Please log in again!");
           setTimeout(() => {
             window.location.href = "/login";
           }, 1500);
           return Promise.reject(err);
         }
       } else {
-        window.location.href = "/login";
+        window.location.href = "/auth";
         return Promise.reject(error);
       }
     }

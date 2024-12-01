@@ -10,6 +10,7 @@ import ManagerLayout from "../features/manager/layout/ManagerLayout";
 import Profile from "../features/employee/pages/Profile";
 import Leave from "../features/employee/pages/Leave";
 import Home from "../features/employee/pages/Home";
+import LeaveTypes from "../features/manager/pages/LeaveTypes";
 
 const routes = createBrowserRouter([
   {
@@ -43,7 +44,7 @@ const routes = createBrowserRouter([
 
   // Admin
   {
-    path: "/admin",
+    path: "/manager",
     element: <ManagerLayout />,
     children: [
       {
@@ -57,6 +58,10 @@ const routes = createBrowserRouter([
       {
         path: "leaves",
         element: <LeaveManagement />
+      },
+      {
+        path: "leave/types",
+        element: <LeaveTypes />
       }
     ]
   },
