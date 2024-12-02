@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Plus,
-  Pencil,
-  X,
-  Check,
-  Shield,
-  ShieldBan,
-} from "lucide-react";
+import { Plus, Pencil, X, Check, Shield, ShieldBan } from "lucide-react";
 import api from "../../../services/api";
 import useLeaveTypes from "../hooks/useLeaveTypes";
 import { showToast } from "../../../utils/showToast";
@@ -69,15 +62,23 @@ const LeaveTypes = () => {
           formData
         );
         console.log(res);
+        showToast(200, "Updated!");
       } catch (error) {
         console.log(error);
+        const Error = error.response.data.name[0];
+        const Message = Error ? Error : "Failed to update!";
+        showToast(400, Message);
       }
     } else {
       try {
         const res = await api.post("api/leave-type/", formData);
         console.log(res);
+        showToast(200, "Added new leave type");
       } catch (error) {
         console.log(error);
+        const Error = error.response.data.name[0];
+        const Message = Error ? Error : "Failed to update!";
+        showToast(400, Message);
       }
     }
     getLeaveTyeps();

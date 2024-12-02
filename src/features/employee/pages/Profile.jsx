@@ -19,15 +19,13 @@ const Profile = () => {
     reason: "",
     attachment: null,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { profile, getProfile, loading } = useProfile();
   console.log(profile);
 
-  // Sample employee data
-
-  const leaveBalances = [];
-
   const handleRequestLeave = async () => {
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append("leave_type", leaveRequestData.leave_type);
     formData.append("start_date", leaveRequestData.start_date);
@@ -43,8 +41,11 @@ const Profile = () => {
       });
       console.log(res);
       showToast(200, "Submitted");
+      setLeaveRequestModal(false);
     } catch (error) {
       console.error("Error submitting leave request:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,6 +83,7 @@ const Profile = () => {
             onClose={() => setLeaveRequestModal(false)}
             setLeaveRequestData={setLeaveRequestData}
             onSubmit={handleRequestLeave}
+            isSubmitting={isSubmitting}
           />
         )}
       </div>

@@ -4,14 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { showToast } from "../../../utils/showToast";
 import { LoginThunk } from "../../../redux/thunk/authThunk";
+import LoadingDotStream from "../components/Loading";
 
 const ManagerAuth = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: "",
+    role: "manager",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -25,19 +27,20 @@ const ManagerAuth = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
+    setLoading(true)
 
     try {
       const res = await dispatch(LoginThunk(formData)).unwrap(); 
       console.log(res);
       navigate('/manager')
+      showToast(200, 'Welcome Back!')
       
     } catch (error) {
       console.log(error);
       showToast(400, 'Failed to Login')
-      
-      
+    }finally{
+      setLoading(false)
     }
-
   };
 
   return (
@@ -118,9 +121,10 @@ const ManagerAuth = () => {
           <div>
             <button
               type="submit"
+              disabled={loading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-colors duration-200"
             >
-              Sign in to Dashboard
+              { loading ? <LoadingDotStream /> :"Sign in to Dashboard"}
             </button>
           </div>
         </form>

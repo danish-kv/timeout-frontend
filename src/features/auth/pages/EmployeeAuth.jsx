@@ -2,18 +2,20 @@ import React, { useState } from "react";
 import { Calendar, User, Lock, AlertCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginThunk } from "../../../redux/thunk/authThunk";
-import {useDispatch} from 'react-redux'
-
+import { useDispatch } from "react-redux";
+import LoadingDotStream from "../components/Loading";
+import { showToast } from "../../../utils/showToast";
 
 const EmployeeAuth = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: 'employee',
+    role: "employee",
   });
   const [error, setError] = useState("");
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -25,17 +27,21 @@ const EmployeeAuth = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const res = await dispatch(LoginThunk(formData)).unwrap(); 
+      const res = await dispatch(LoginThunk(formData)).unwrap();
       console.log("Login ===: ", res);
-      navigate('/home')
-
+      navigate("/home");
+      showToast(200, "Welcome Back!");
     } catch (error) {
       console.log("Error during login: ", error);
       setError(error?.detail || "An error occurred during login.");
+      showToast(400, "Failed to Login");
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-lg">
@@ -114,9 +120,10 @@ const EmployeeAuth = () => {
           <div>
             <button
               type="submit"
+              disabled={loading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
             >
-              Sign in
+              {loading ? <LoadingDotStream /> : "Sign in"}
             </button>
           </div>
         </form>
