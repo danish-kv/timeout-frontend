@@ -11,36 +11,40 @@ import Profile from "../features/employee/pages/Profile";
 import Leave from "../features/employee/pages/Leave";
 import Home from "../features/employee/pages/Home";
 import LeaveTypes from "../features/manager/pages/LeaveTypes";
+import Unauthorized from "../pages/Unauthorized";
+import ProtectedRoute from "./protected/ProtectedRoute";
+import AuthProtection from "./protected/AuthProtection";
+import LandingPageProtection from "./protected/LandingPageProtection";
 
 const routes = createBrowserRouter([
   {
     path: "/",
-    element: <LandingPage />,
+    element: <LandingPageProtection element={<LandingPage />}/>,
   },
   {
     path: "/manager/auth",
-    element: <ManagerAuth />,
-
+    element: (
+      <AuthProtection element={<ManagerAuth />} redirectTo={"/manager"} />
+    ),
   },
   {
     path: "/auth",
-    element: <EmployeeAuth />,
+    element: <AuthProtection element={<EmployeeAuth />} redirectTo={"/home"} />,
   },
 
   // Employe
   {
     path: "/home",
-    element: <Home />,
+    element: <ProtectedRoute element={<Home />} role={"employee"} />,
   },
   {
     path: "/profile",
-    element: <Profile />,
+    element: <ProtectedRoute element={<Profile />} role={"employee"} />,
   },
   {
     path: "/leave",
-    element: <Leave />,
+    element: <ProtectedRoute element={<Leave />} role={"employee"} />,
   },
-
 
   // Admin
   {
@@ -48,25 +52,30 @@ const routes = createBrowserRouter([
     element: <ManagerLayout />,
     children: [
       {
-        path: "",
-        element: <Dashboard />
+        index : true,
+        element: <ProtectedRoute element={<Dashboard />} role={"manager"} />,
       },
       {
         path: "employees",
-        element: <EmployeeManagement />
+        element: (
+          <ProtectedRoute element={<EmployeeManagement />} role={"manager"} />
+        ),
       },
       {
         path: "leaves",
-        element: <LeaveManagement />
+        element: (
+          <ProtectedRoute element={<LeaveManagement />} role={"manager"} />
+        ),
       },
       {
-        path: "leave/types",
-        element: <LeaveTypes />
-      }
-    ]
+        path: "leave-types",
+        element: <ProtectedRoute element={<LeaveTypes />} role={"manager"} />,
+      },
+    ],
   },
 
-  {path : '*', element :  <NotFound/>}
+  { path: "*", element: <NotFound /> },
+  { path: "unauthorized", element: <Unauthorized /> },
 ]);
 
 export default routes;
