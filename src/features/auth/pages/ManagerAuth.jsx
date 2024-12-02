@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { User, Lock, AlertCircle, Shield } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { showToast } from "../../../utils/showToast";
+import { LoginThunk } from "../../../redux/thunk/authThunk";
 
 const ManagerAuth = () => {
   const [formData, setFormData] = useState({
-    employeeId: "",
+    username: "",
     password: "",
+    role: "",
   });
   const [error, setError] = useState("");
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     setFormData({
@@ -17,8 +23,21 @@ const ManagerAuth = () => {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
+
+    try {
+      const res = await dispatch(LoginThunk(formData)).unwrap(); 
+      console.log(res);
+      navigate('/manager')
+      
+    } catch (error) {
+      console.log(error);
+      showToast(400, 'Failed to Login')
+      
+      
+    }
+
   };
 
   return (
@@ -49,23 +68,23 @@ const ManagerAuth = () => {
           <div className="space-y-4">
             <div>
               <label
-                htmlFor="employeeId"
+                htmlFor="username"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Employee ID
+                Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="employeeId"
-                  name="employeeId"
+                  id="username"
+                  name="username"
                   type="text"
                   required
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                  placeholder="Enter your employee ID"
-                  value={formData.employeeId}
+                  placeholder="Enter your username"
+                  value={formData.username}
                   onChange={handleChange}
                 />
               </div>
@@ -95,30 +114,6 @@ const ManagerAuth = () => {
               </div>
             </div>
           </div>
-
-          {/* Remember Me and Forgot Password */}
-          {/* <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-700"
-              >
-                Remember me
-              </label>
-            </div>
-            <button
-              type="button"
-              className="text-sm text-rose-600 hover:text-rose-500"
-            >
-              Forgot password?
-            </button>
-          </div> */}
 
           <div>
             <button

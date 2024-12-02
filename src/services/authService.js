@@ -39,7 +39,11 @@ export const login = async ({ username, password, role }) => {
   try {
     console.log("login ===> ", username, password, role);
 
-    const res = await api.post("api/login/token/", { username, password, role });
+    const res = await api.post("api/login/token/", {
+      username,
+      password,
+      role,
+    });
     console.log("res from login ====>", res);
 
     return res.data;
@@ -63,8 +67,19 @@ export const login = async ({ username, password, role }) => {
   }
 };
 
+export const logout = async (refresh) => {
+  try {
+    const res = await api.post("api/logout/", { refresh: refresh });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    showToast("Failed to Logout");
+  }
+  showToast(200, "Thank You..");
+};
 
 export default {
   register,
   login,
+  logout,
 };
