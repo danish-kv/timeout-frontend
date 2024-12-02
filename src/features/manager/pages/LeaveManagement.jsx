@@ -1,21 +1,31 @@
-import React, { useState } from "react";
-import { Calendar, Filter, X, Eye } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Filter, Eye } from "lucide-react";
 import useLeaves from "../../employee/hooks/useLeaves";
 import { DateFormat } from "../../../utils/format";
 import api from "../../../services/api";
 import { showToast } from "../../../utils/showToast";
 import useLeaveTypes from "../hooks/useLeaveTypes";
+import LeaveDetailModal from "../modal/LeaveDetailModal";
 
 const LeaveManagement = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterLeaveType, setFilterLeaveType] = useState("all");
 
   const { leaves, getLeaves } = useLeaves();
   const { leaveTypes } = useLeaveTypes();
 
-  console.log("llvares  =====", leaves);
+  console.log("leave  =====", leaves);
   console.log("leave types  =====", leaveTypes);
+
+  useEffect(() => {
+    const filters = {};
+    if (filterStatus !== "all") filters.status = filterStatus;
+    if (filterLeaveType !== "all") filters.leave_type__name = filterLeaveType;
+
+    getLeaves(filters);
+  }, [filterStatus, filterLeaveType]);
 
   const getStatusColor = (status) => {
     const colors = {
@@ -26,170 +36,35 @@ const LeaveManagement = () => {
     return colors[status] || "bg-gray-100 text-gray-800";
   };
 
-  const DetailModal = () => {
-    const [comment, setComment] = useState("");
+  const handleAddComment = async (comment) => {
+    console.log("commmmeeet ===", comment);
 
-    if (!selectedRequest) return null;
+    try {
+      const res = await api.patch(`api/leave-request/${selectedRequest.id}/`, {
+        comment,
+      });
+      console.log(res);
+      showToast(200, "Comment Added...");
+      getLeaves();
+    } catch (error) {
+      console.log(error);
+      showToast(400, "Failed to comment");
+    }
+  };
 
-    console.log("selected request ===", selectedRequest);
-
-    const handleAddComment = () => {
-      try {
-        const res = api.patch(
-          `api/leave-request/${selectedRequest.id}/`,
-          comment
-        );
-        console.log(res);
-        showToast(200, "Comment Added...");
-        getLeaves();
-      } catch (error) {
-        console.log(error);
-        showToast(400, "Failed to comment");
-      }
-    };
-
-    const handleLeaveRequest = async (status) => {
-      try {
-        const res = await api.patch(
-          `api/leave-request/${selectedRequest.id}/`,
-          { status: status }
-        );
-        console.log(res);
-        getLeaves();
-
-        showToast(200, "Okey");
-      } catch (error) {
-        console.log(error);
-        showToast(400, "Failed ");
-      }
-    };
-
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="w-full max-w-3xl rounded-lg bg-white p-6">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold">Leave Request Details</h2>
-            <button
-              onClick={() => setShowDetailModal(false)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Employee Information
-                </h3>
-                <p className="mt-1 text-lg font-medium capitalize">
-                  {selectedRequest.employee.username}
-                </p>
-                <p className="text-sm text-gray-600 capitalize">
-                  {selectedRequest.employee.department}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Leave Period
-                </h3>
-                <p className="mt-1 text-sm text-gray-800">
-                  {selectedRequest.start_date
-                    ? DateFormat(selectedRequest.start_date)
-                    : "N/A"}{" "}
-                  to{" "}
-                  {selectedRequest.end_date
-                    ? DateFormat(selectedRequest.end_date)
-                    : "N/A"}
-                </p>
-
-                <p className="mt-1 text-sm text-gray-600">
-                  Applied on:{" "}
-                  {selectedRequest.created_at
-                    ? DateFormat(selectedRequest.created_at)
-                    : "N/A"}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Leave Type
-                </h3>
-                <p className="mt-1 text-sm text-gray-800">
-                  {selectedRequest.leave_type_detail.name}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Reason</h3>
-                <p className="mt-1 text-sm text-gray-800">
-                  {selectedRequest.reason}
-                </p>
-              </div>
-            </div>
-
-            {selectedRequest.status === "approved" ? (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Comments
-                  </h3>
-                  <textarea
-                    disabled
-                    value={comment}
-                    className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm"
-                    rows={4}
-                    placeholder="No Comments!"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Comments
-                  </h3>
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm"
-                    rows={4}
-                    placeholder="Add your comments here..."
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-6 flex justify-end space-x-3">
-            {selectedRequest.status === "pending" && (
-              <>
-                <button
-                  onClick={() => setShowDetailModal(false)}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleLeaveRequest("rejected")}
-                  className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-                >
-                  Reject
-                </button>
-                <button
-                  onClick={() => handleLeaveRequest("approved")}
-                  className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-                >
-                  Approve
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+  const handleLeaveRequest = async (status) => {
+    try {
+      const res = await api.patch(`api/leave-request/${selectedRequest.id}/`, {
+        status,
+      });
+      console.log(res);
+      getLeaves();
+      showToast(200, `${status.charAt(0).toUpperCase() + status.slice(1)}!`);
+      setShowDetailModal(false);
+    } catch (error) {
+      console.log(error);
+      showToast(400, "Failed to update status");
+    }
   };
 
   return (
@@ -199,12 +74,6 @@ const LeaveManagement = () => {
         <h1 className="text-2xl font-bold text-gray-800">
           Leave Approval Management
         </h1>
-        <div className="flex items-center space-x-4">
-          <button className="flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-600 hover:bg-gray-50">
-            <Calendar className="mr-2 h-5 w-5" />
-            View Calendar
-          </button>
-        </div>
       </div>
 
       {/* Filters */}
@@ -223,11 +92,17 @@ const LeaveManagement = () => {
           </select>
         </div>
         <div className="flex items-center space-x-4">
-          <select className="rounded-lg border border-gray-300 bg-white px-4 py-2">
-            <option>All Leave Types</option>
+          <select
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2"
+            value={filterLeaveType}
+            onChange={(e) => setFilterLeaveType(e.target.value)}
+          >
+            <option value="all">All Leave Types</option>
             {leaveTypes &&
               leaveTypes.map((type) => (
-                <option value={type.name}>{type.name}</option>
+                <option key={type.id} value={type.name}>
+                  {type.name}
+                </option>
               ))}
           </select>
         </div>
@@ -305,8 +180,13 @@ const LeaveManagement = () => {
         </table>
       </div>
 
-      {/* Detail Modal */}
-      {showDetailModal && <DetailModal />}
+      <LeaveDetailModal
+        selectedRequest={selectedRequest}
+        show={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        onLeaveRequest={handleLeaveRequest}
+        onAddComment={(comment) => handleAddComment(comment)}
+      />
     </div>
   );
 };
