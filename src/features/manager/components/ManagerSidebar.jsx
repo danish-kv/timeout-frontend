@@ -1,69 +1,60 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
   Calendar,
-  ClipboardList,
-  Settings,
-  BarChart,
-  LogOut,
   ChevronLeft,
   Menu,
-  Bell,
-  MessageSquare
-} from 'lucide-react';
+  Shapes,
+} from "lucide-react";
 
-const AdminSidebar = () => {
+const ManagerSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const menuItems = [
     {
-      id: '',
-      title: 'Dashboard',
+      id: "",
+      title: "Dashboard",
       icon: LayoutDashboard,
-      badge: null
     },
     {
-      id: 'employees',
-      title: 'Employees',
+      id: "employees",
+      title: "Employees",
       icon: Users,
-      badge: null
     },
     {
-      id: 'leaves',
-      title: 'Leave Requests',
+      id: "leaves",
+      title: "Leave Requests",
       icon: Calendar,
-      badge: '8'
     },
     {
-      id: 'reports',
-      title: 'Reports',
-      icon: BarChart,
-      badge: null
+      id: "leave-types",
+      title: "Types Leave",
+      icon: Shapes,
     },
-    {
-      id: 'settings',
-      title: 'Settings',
-      icon: Settings,
-      badge: null
-    }
   ];
 
   const getCurrentPage = () => {
-    const path = location.pathname.split('/').pop();
-    return path || '';
+    const path = location.pathname.split("/").pop();
+    console.log(path);
+
+    return path || "";
   };
 
   return (
-    <div className={`${isCollapsed ? 'w-20' : 'w-64'} flex h-screen flex-col bg-white transition-all duration-300 ease-in-out`}>
+    <div
+      className={`${
+        isCollapsed ? "w-20" : "w-64"
+      } flex h-screen flex-col bg-white transition-all duration-300 ease-in-out`}
+    >
       {/* Logo Section */}
       <div className="flex h-16 items-center justify-between border-b px-4">
         {!isCollapsed && (
           <div className="flex items-center">
-            <div className="h-8 w-8 rounded-lg bg-blue-600"></div>
+            <div className="h-8 w-8 rounded-lg bg-red-600"></div>
             <span className="ml-3 font-bold text-gray-800">Leave Manager</span>
           </div>
         )}
@@ -84,22 +75,19 @@ const AdminSidebar = () => {
         {menuItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => navigate(`/admin/${item.id}`)}
+            onClick={() => navigate(`/manager/${item.id}`)}
             className={`flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
               getCurrentPage() === item.id
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? "bg-red-50 text-red-600"
+                : "text-gray-600 hover:bg-gray-50"
             }`}
           >
             <item.icon className="h-5 w-5" />
             {!isCollapsed && (
               <>
-                <span className="ml-3 flex-1 whitespace-nowrap">{item.title}</span>
-                {item.badge && (
-                  <span className="ml-3 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    {item.badge}
-                  </span>
-                )}
+                <span className="ml-3 flex-1 whitespace-nowrap">
+                  {item.title}
+                </span>
               </>
             )}
           </button>
@@ -113,7 +101,7 @@ const AdminSidebar = () => {
           {!isCollapsed && (
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-700">Admin User</p>
-              <p className="text-xs text-gray-500">admin@company.com</p>
+              <p className="text-xs text-gray-500">manager@gmail.com</p>
             </div>
           )}
         </div>
@@ -122,4 +110,4 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default ManagerSidebar;

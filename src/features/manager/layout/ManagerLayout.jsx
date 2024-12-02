@@ -1,46 +1,45 @@
-import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import { Bell, MessageSquare, LogOut, Sidebar } from 'lucide-react';
-import AdminSidebar from '../components/AdminSidebar';
+import React from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { LogOut } from "lucide-react";
+import ManagerSidebar from "../components/ManagerSidebar";
+import { LogoutThunk } from "../../../redux/thunk/authThunk";
+import { useDispatch } from "react-redux";
 
 const ManagerLayout = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+
   const getPageTitle = () => {
-    const path = location.pathname.split('/').pop();
+    const path = location.pathname.split("/").pop();
     switch (path) {
-      case '':
-        return 'Dashboard';
-      case 'employees':
-        return 'Employees';
-      case 'leaves':
-        return 'Leave Requests';
-      case 'reports':
-        return 'Reports';
-      case 'settings':
-        return 'Settings';
+      case "":
+        return "Dashboard";
+      case "employees":
+        return "Employees";
+      case "leaves":
+        return "Leave Requests";
+      case "leave-types":
+        return "Leave Types";
       default:
-        return '';
+        return "";
     }
   };
 
   return (
     <div className="flex min-h-screen">
-      <AdminSidebar />
-      <div className="flex flex-1 flex-col">
+      <ManagerSidebar />
+      <div className="flex flex-1 flex-col ml-64 md:ml-0">
         {/* Top Navigation Bar */}
         <div className="flex h-16 items-center justify-between border-b bg-white px-6">
           <div className="text-xl font-semibold text-gray-800">
             {getPageTitle()}
           </div>
           <div className="flex items-center space-x-4">
-            <button className="rounded-lg p-2 hover:bg-gray-100">
-              <Bell className="h-5 w-5 text-gray-500" />
-            </button>
-            <button className="rounded-lg p-2 hover:bg-gray-100">
-              <MessageSquare className="h-5 w-5 text-gray-500" />
-            </button>
             <div className="h-8 w-px bg-gray-200"></div>
-            <button className="flex items-center rounded-lg p-2 text-red-600 hover:bg-red-50">
+            <button
+              onClick={() => dispatch(LogoutThunk())}
+              className="flex items-center rounded-lg p-2 text-red-600 hover:bg-red-50"
+            >
               <LogOut className="h-5 w-5" />
               <span className="ml-2">Logout</span>
             </button>
