@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import { 
   Mail, 
   Phone, 
@@ -117,10 +117,10 @@ const Profile = () => {
           {/* Work History section can be added here */}
         </div>
 
-        {/* Leave Balance Card */}
+        {/* Total Leave Card */}
         <div className="space-y-8">
           <div className="rounded-lg bg-white p-6 shadow-sm">
-            <h2 className="mb-6 text-lg font-bold text-gray-800">Leave Balance</h2>
+            <h2 className="mb-6 text-lg font-bold text-gray-800">Total Leave</h2>
             <div className="space-y-6">
               {leaveBalance.map((leave) => (
                 <div key={leave.type} className="space-y-3">
