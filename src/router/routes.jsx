@@ -8,7 +8,6 @@ import EmployeeManagement from "../features/manager/pages/EmployeeManagement";
 import LeaveManagement from "../features/manager/pages/LeaveManagement";
 import ManagerLayout from "../features/manager/layout/ManagerLayout";
 import Profile from "../features/employee/pages/Profile";
-import Leave from "../features/employee/pages/Leave";
 import Home from "../features/employee/pages/Home";
 import LeaveTypes from "../features/manager/pages/LeaveTypes";
 import Unauthorized from "../pages/Unauthorized";
@@ -40,10 +39,6 @@ const routes = createBrowserRouter([
   {
     path: "/profile",
     element: <ProtectedRoute element={<Profile />} role={"employee"} />,
-  },
-  {
-    path: "/leave",
-    element: <ProtectedRoute element={<Leave />} role={"employee"} />,
   },
 
   // Admin
