@@ -36,7 +36,16 @@ const EmployeeManagement = () => {
       showToast(200, "Updated");
     } catch (error) {
       console.log(error);
-      showToast(400, "Failed");
+      let Error = "Failed";
+      if (error.response?.data?.email?.[0]) {
+        Error = error.response.data.email[0];
+      } else if (error.response?.data?.password?.[0]) {
+        Error = error.response.data.password[0];
+      } else if (error.response?.data?.username?.[0]) {
+        Error = error.response.data.username[0];
+      }
+      showToast(400, Error);
+      console.log(error);
     }
   };
 
@@ -53,7 +62,15 @@ const EmployeeManagement = () => {
       showToast(200, "Updated");
       setShowEditModal(false);
     } catch (error) {
-      showToast(400, "Failed");
+      let Error = "Failed";
+      if (error.response?.data?.email?.[0]) {
+        Error = error.response.data.email[0];
+      } else if (error.response?.data?.password?.[0]) {
+        Error = error.response.data.password[0];
+      } else if (error.response?.data?.username?.[0]) {
+        Error = error.response.data.username[0];
+      }
+      showToast(400, Error);
       console.log(error);
     }
   };

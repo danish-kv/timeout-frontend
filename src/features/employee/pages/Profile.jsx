@@ -44,6 +44,7 @@ const Profile = () => {
       setLeaveRequestModal(false);
     } catch (error) {
       console.error("Error submitting leave request:", error);
+      showToast(400, "Failed");
     } finally {
       setIsSubmitting(false);
     }
