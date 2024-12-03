@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, Paperclip, Download, File } from "lucide-react";
 import { DateFormat } from "../../../utils/format";
 
 const LeaveDetailModal = ({
@@ -27,37 +27,58 @@ const LeaveDetailModal = ({
     selectedRequest.status === "approved" ||
     selectedRequest.status === "rejected";
 
+  const getStatusColor = (status) => {
+    const colors = {
+      pending: "bg-yellow-100 text-yellow-800",
+      approved: "bg-green-100 text-green-800",
+      rejected: "bg-red-100 text-red-800",
+    };
+    return colors[status] || "bg-gray-100 text-gray-800";
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-3xl rounded-lg bg-white p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Leave Request Details</h2>
+      <div className="w-full max-w-4xl rounded-lg bg-white p-6">
+        <div className="mb-6 flex items-center justify-between border-b border-red-100 pb-4">
+          <div>
+            <h2 className="text-xl font-bold text-red-900">
+              Leave Request Details
+            </h2>
+            <span
+              className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-medium capitalize ${getStatusColor(
+                selectedRequest.status
+              )}`}
+            >
+              {selectedRequest.status}
+            </span>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-red-700"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">
+        <div className="grid grid-cols-2 gap-6 bg-red-50 rounded-lg">
+          <div className="space-y-4 ">
+            {/* Employee Information Section */}
+            <div className="rounded-lg p-4">
+              <h3 className="text-sm font-medium text-red-900">
                 Employee Information
               </h3>
-              <p className="mt-1 text-lg font-medium capitalize">
+              <p className="mt-1 text-lg font-medium capitalize text-red-800">
                 {selectedRequest.employee.username}
               </p>
-              <p className="text-sm text-gray-600 capitalize">
+              <p className="text-sm text-red-700 capitalize">
                 {selectedRequest.employee.department}
               </p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">
-                Leave Period
-              </h3>
-              <p className="mt-1 text-sm text-gray-800">
+
+            {/* Leave Period Section */}
+            <div className="rounded-lg  p-4">
+              <h3 className="text-sm font-medium text-red-900">Leave Period</h3>
+              <p className="mt-1 text-sm text-red-800">
                 {selectedRequest.start_date
                   ? DateFormat(selectedRequest.start_date)
                   : "N/A"}{" "}
@@ -66,29 +87,69 @@ const LeaveDetailModal = ({
                   ? DateFormat(selectedRequest.end_date)
                   : "N/A"}
               </p>
-              <p className="mt-1 text-sm text-gray-600">
+              <p className="mt-1 text-sm text-red-700">
                 Applied on:{" "}
                 {selectedRequest.created_at
                   ? DateFormat(selectedRequest.created_at)
                   : "N/A"}
               </p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Leave Type</h3>
-              <p className="mt-1 text-sm text-gray-800">
+
+            {/* Leave Type Section */}
+            <div className="rounded-lg  p-4">
+              <h3 className="text-sm font-medium text-red-900">Leave Type</h3>
+              <p className="mt-1 text-sm text-red-800">
                 {selectedRequest.leave_type_detail.name}
               </p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Reason</h3>
-              <p className="mt-1 text-sm text-gray-800">
+
+            {/* Reason Section */}
+            <div className="rounded-lg  p-4">
+              <h3 className="text-sm font-medium text-red-900">Reason</h3>
+              <p className="mt-1 text-sm text-red-800">
                 {selectedRequest.reason}
               </p>
             </div>
           </div>
+
           <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Comments</h3>
+            {/* Attachments Section */}
+            <div className="rounded-lg  p-4">
+              <h3 className="mb-2 text-sm font-medium text-red-900">
+                <Paperclip className="mr-1 inline-block h-4 w-4" />
+                Attachments
+              </h3>
+              {selectedRequest.attachment ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between rounded-md border border-red-200 bg-white p-2">
+                    <div className="flex items-center">
+                      <File className="mr-2 h-4 w-4 text-red-600" />
+
+                      <span className="text-sm text-red-800">
+                        {selectedRequest.attachment.split("/").pop() ||
+                          "Attachment"}
+                      </span>
+                    </div>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={selectedRequest.attachment}
+                      aria-label="Download attachment"
+                    >
+                      <button className="rounded-full p-1 hover:bg-red-100">
+                        <Download className="h-4 w-4 text-red-600" />
+                      </button>
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-red-700">No attachments uploaded</p>
+              )}
+            </div>
+
+            {/* Comments Section */}
+            <div className="rounded-lg  p-4">
+              <h3 className="text-sm font-medium text-red-900">Comments</h3>
               <textarea
                 disabled={isCommentDisabled}
                 value={isCommentDisabled ? selectedRequest.comment : comment}
@@ -97,7 +158,7 @@ const LeaveDetailModal = ({
                     ? (e) => setComment(e.target.value)
                     : undefined
                 }
-                className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-red-200 bg-white p-2 text-sm text-red-800 placeholder-red-400"
                 rows={4}
                 placeholder={
                   isCommentDisabled
@@ -119,12 +180,14 @@ const LeaveDetailModal = ({
             )}
           </div>
         </div>
+
+        {/* Action Buttons */}
         <div className="mt-6 flex justify-end space-x-3">
           {selectedRequest.status === "pending" && (
             <>
               <button
                 onClick={onClose}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-red-300 px-4 py-2 text-red-700 hover:bg-red-50"
               >
                 Cancel
               </button>
