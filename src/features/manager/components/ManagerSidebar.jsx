@@ -8,11 +8,14 @@ import {
   Menu,
   Shapes,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const ManagerSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { user } = useSelector((state) => state.auth);
 
   const menuItems = [
     {
@@ -100,8 +103,10 @@ const ManagerSidebar = () => {
           <div className="h-8 w-8 rounded-full bg-gray-200"></div>
           {!isCollapsed && (
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-700">Admin User</p>
-              <p className="text-xs text-gray-500">manager@gmail.com</p>
+              <p className="text-sm font-medium text-gray-700 capitalize">
+                {user}
+              </p>
+              <p className="text-xs text-gray-500">{user}@gmail.com</p>
             </div>
           )}
         </div>
