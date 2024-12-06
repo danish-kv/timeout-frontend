@@ -24,12 +24,18 @@ const Profile = () => {
   const { profile, getProfile, loading } = useProfile();
   console.log(profile);
 
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    return d.toISOString().split("T")[0];
+  };
+
   const handleRequestLeave = async () => {
     setIsSubmitting(true);
     const formData = new FormData();
     formData.append("leave_type", leaveRequestData.leave_type);
-    formData.append("start_date", leaveRequestData.start_date);
-    formData.append("end_date", leaveRequestData.end_date);
+    formData.append("start_date", formatDate(leaveRequestData.start_date));
+    formData.append("end_date", formatDate(leaveRequestData.end_date));
     formData.append("reason", leaveRequestData.reason);
     if (leaveRequestData.attachment) {
       formData.append("attachment", leaveRequestData.attachment);
@@ -41,10 +47,10 @@ const Profile = () => {
       });
       console.log(res);
       showToast(200, "Submitted");
+      getProfile();
       setLeaveRequestModal(false);
     } catch (error) {
       console.error("Error submitting leave request:", error);
-      showToast(400, "Failed");
     } finally {
       setIsSubmitting(false);
     }

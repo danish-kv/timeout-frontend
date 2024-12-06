@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { Upload, XCircle, Calendar, Loader2} from "lucide-react";
+import { Upload, XCircle, Calendar, Loader2 } from "lucide-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import useLeaveType from "../hooks/useLeaveType";
 
 const LeaveRequestModal = ({
@@ -7,11 +9,21 @@ const LeaveRequestModal = ({
   leaveRequestData,
   setLeaveRequestData,
   isSubmitting,
-  onSubmit
+  onSubmit,
 }) => {
   const [dragActive, setDragActive] = useState(false);
-  const { leaveTypes } = useLeaveType()
-console.log('leave tupes === ', leaveTypes);
+  const { leaveTypes } = useLeaveType();
+
+  const isDateDisabled = (date) => {
+    const day = date.getDay();
+
+    if (day === 0) return true;
+
+    const holidays = ["2024-12-25", "2024-01-01"];
+
+    const dateString = date.toISOString().split("T")[0];
+    return holidays.includes(dateString);
+  };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -27,14 +39,13 @@ console.log('leave tupes === ', leaveTypes);
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-  
+
     const file = e.dataTransfer.files[0];
     if (file) {
       setLeaveRequestData((prev) => ({ ...prev, attachment: file }));
     }
   };
 
-  
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
@@ -73,7 +84,11 @@ console.log('leave tupes === ', leaveTypes);
                   >
                     <option value="">Select Leave Type</option>
                     {leaveTypes.map((type) => (
-                      <option key={type.id} value={type.id} className="capitalize">
+                      <option
+                        key={type.id}
+                        value={type.id}
+                        className="capitalize"
+                      >
                         {type.name}
                       </option>
                     ))}
@@ -91,29 +106,52 @@ console.log('leave tupes === ', leaveTypes);
                 </label>
                 <div className="flex gap-3">
                   <div className="relative flex-1">
-                    <input
-                      type="date"
-                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all outline-none"
-                      value={leaveRequestData.start_date}
-                      onChange={(e) =>
+                    <DatePicker
+                      selected={
+                        leaveRequestData.start_date
+                          ? new Date(leaveRequestData.start_date)
+                          : null
+                      }
+                      onChange={(date) =>
                         setLeaveRequestData({
                           ...leaveRequestData,
-                          start_date: e.target.value,
+                          start_date: date,
+                          end_date:
+                            date > leaveRequestData.end_date
+                              ? date
+                              : leaveRequestData.end_date,
                         })
                       }
+                      filterDate={(date) => !isDateDisabled(date)}
+                      minDate={new Date()}
+                      dateFormat="yyyy-MM-dd"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all outline-none"
+                      placeholderText="Start Date"
                     />
                   </div>
                   <div className="relative flex-1">
-                    <input
-                      type="date"
-                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all outline-none"
-                      value={leaveRequestData.end_date}
-                      onChange={(e) =>
+                    <DatePicker
+                      selected={
+                        leaveRequestData.end_date
+                          ? new Date(leaveRequestData.end_date)
+                          : null
+                      }
+                      onChange={(date) =>
                         setLeaveRequestData({
                           ...leaveRequestData,
-                          end_date: e.target.value,
+                          end_date: date,
                         })
                       }
+                      filterDate={(date) => !isDateDisabled(date)}
+                      minDate={
+                        leaveRequestData.start_date
+                          ? new Date(leaveRequestData.start_date)
+                          : new Date()
+                      }
+                      dateFormat="yyyy-MM-dd"
+                      className="w-full  border border-gray-200 rounded-lg px-4 py-2.5 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all outline-none"
+                      placeholderText="End Date"
+                      popperPlacement="top-start"
                     />
                   </div>
                 </div>
