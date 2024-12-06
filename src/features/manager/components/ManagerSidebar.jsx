@@ -56,9 +56,9 @@ const ManagerSidebar = () => {
       {/* Logo Section */}
       <div className="flex h-16 items-center justify-between border-b px-4">
         {!isCollapsed && (
-          <div className="flex items-center">
-            <div className="h-8 w-8 rounded-lg bg-red-600"></div>
-            <span className="ml-3 font-bold text-gray-800">Leave Manager</span>
+          <div className="flex items-center space-x-2">
+            <Calendar className="h-6 w-6 text-red-600" />
+            <span className="text-xl font-semibold text-gray-800">Timeout</span>
           </div>
         )}
         <button
